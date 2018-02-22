@@ -1,0 +1,95 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+int main()
+{
+	FILE *fp1,*fp2;
+    int a[5][3],i,T=0,floor=1,j,sum,f[5]={0},t[5],n=0,fm=20,status=0,s[5]={0};
+    fp1=fopen("input.txt","r");
+	fp2=fopen("output.txt","w");
+	if((fp1=fopen("input.txt","r"))==NULL)
+    {
+   		printf("cannot open this file\n");
+   		exit(0);
+	} 
+	for(i=0;i<5;i++)
+	{
+		fscanf(fp1,"%d%d%d",&a[i][0],&a[i][1],&a[i][2]);//输入五组请求。
+		t[i]=a[i][0];
+	}
+	for(i=0;;)
+	{
+		for(j=0;j<5;j++)
+		{
+			if(T>=a[j][0]&&s[j]==0)
+			{
+				f[j]=a[j][1];
+			}
+			else if(s[j]==1&&s[j]==1)
+			{
+				f[j]=a[j][2];
+			}
+			else
+			{
+				f[j]=0;
+			}
+		}//所有目标楼层 
+		for(j=0;j<5;j++)
+		{
+			if(((abs(fm-floor)>abs(f[j]-floor))&&f[j]!=0))
+			{
+		        fm=f[j];
+			}
+		}//选择最近楼层 
+		if(floor>fm&&fm!=20)
+		{
+			status=-1;
+		}
+		else if(floor<fm&&fm!=20)
+		{
+			status=1;
+		}//电梯运行 
+		else
+		{
+			status=0;
+			for(j=0;j<5;j++)
+			{
+				if(fm==a[j][1]&&s[j]==0&&T>=a[j][0])
+				{
+					fprintf(fp2,"%d时，停靠在%d楼\n",T,floor);
+					n++;
+					s[j]=1;
+				}
+				if(fm==a[j][2]&&s[j]==1)
+				{
+					fprintf(fp2,"%d时，停靠在%d楼\n",T,floor);
+					n--;
+					s[j]=2;
+					t[j]=T-a[j][0];
+				}
+			}//电梯在目标楼层，乘客上电梯或下电梯 
+		}
+	    if(status==0)
+	    {
+			T++;
+		}
+		else if(status==1)
+		{
+		    T++;
+			floor++;
+		}
+		else
+		{
+			T++;
+			floor--;
+		}
+		if(s[0]==2&&s[1]==2&&s[2]==2&&s[3]==2&&s[4]==2)
+		{
+			break;
+		}
+		fm=20;
+	}
+	sum=t[0]+t[1]+t[2]+t[3]+t[4];
+	fprintf(fp2,"%d",sum);
+	return 0;
+}
