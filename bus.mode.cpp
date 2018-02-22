@@ -1,0 +1,91 @@
+//公交车模型：1、电梯在毎一层都停靠；2、电梯没到顶层或底层前不掉头 
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+	FILE *fp1,*fp2;
+	int T=0,floor=1,n=0,i,j,status=1,stop=0,f=10,sum;
+	int a[5][3],t[5]={0},s[5]={0};
+	fp1=fopen("input.txt","r");
+	fp2=fopen("output.txt","w");
+	if((fp1=fopen("input.txt","r"))==NULL)
+    {
+   		printf("cannot open this file\n");
+   		exit(0);
+	} 
+	for(i=0;i<5;i++)
+	{
+		fscanf(fp1,"%d%d%d",&a[i][0],&a[i][1],&a[i][2]);//输入五组请求。
+		t[i]=a[i][0];
+	}
+	for(;;)
+	{
+		for(j=0;j<5;j++)
+		{
+			if(s[j]==1&&floor==a[j][2])
+			{
+				fprintf(fp2,"%d时,在%d楼停靠\n",T,floor);//乘客下电梯 
+				n--;
+				s[j]=2;
+				stop=1;
+				status=0;
+			}
+		}
+		for(j=0;j<5;j++)
+		{
+			if(T>=a[j][0]&&floor==a[j][1]&&s[j]==0)
+			{
+				fprintf(fp2,"%d时,在%d楼停靠\n",T,floor);//乘客进电梯 
+				n++;
+				s[j]=1;
+			    stop=1;
+			    status=0;
+			}
+		}
+		if(stop==0)
+		{
+			fprintf(fp2,"%d时,在%d楼停靠\n",T,floor);//电梯停靠 
+			stop=1;
+			status=0;
+		}
+		if(status==1)
+		{
+			T++;
+			floor++;
+			stop=0;
+		}
+		else if(status==-1)//电梯运行 
+		{
+			T++;
+			floor--;
+			stop=0;
+		}
+		else
+		{
+			T++;
+		}
+		if(floor==f&&f==10)//若到顶层或底层则运行方向改变 
+		{
+			f=1;
+		}
+		else if(floor==f&&f==1)
+		{
+			f=10;
+		}
+		if(f==10)//判断运行方向 
+		{
+			status=1;
+		}
+		else
+		{
+			status=-1;
+		}
+		if(s[0]==2&&s[1]==2&&s[2]==2&&s[3]==2&&s[4]==2)
+		{
+			break;
+		}
+	}
+	sum=t[0]+t[1]+t[2]+t[3]+t[4];
+	fprintf(fp2,"%d",sum);
+	return 0;
+}
