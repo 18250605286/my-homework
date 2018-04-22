@@ -1,95 +1,131 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
-int main()
+#include<iostream>
+#include<fstream>
+#include "elevator.h"
+using namespace std;
+queue::queue()
 {
-	FILE *fp1,*fp2;
-    int a[5][3],i,T=0,floor=1,j,sum,f[5]={0},t[5],n=0,fm=20,status=0,s[5]={0};
-    fp1=fopen("input.txt","r");
-	fp2=fopen("output.txt","w");
-	if((fp1=fopen("input.txt","r"))==NULL)
-    {
-   		printf("cannot open this file\n");
-   		exit(0);
-	} 
-	for(i=0;i<5;i++)
+	int i;
+	for(i=0;i<3;i++)
 	{
-		fscanf(fp1,"%d%d%d",&a[i][0],&a[i][1],&a[i][2]);//输入五组请求。
-		t[i]=a[i][0];
+		floor[i]=0;
 	}
-	for(i=0;;)
+	n=0;
+}
+wait::wait()
+{
+	int i,j;
+	for(i=0;i<3;i++)
 	{
-		for(j=0;j<5;j++)
+		for(j=0;j<3;j++)
 		{
-			if(T>=a[j][0]&&s[j]==0)
-			{
-				f[j]=a[j][1];
-			}
-			else if(s[j]==1&&s[j]==1)
-			{
-				f[j]=a[j][2];
-			}
-			else
-			{
-				f[j]=0;
-			}
-		}//所有目标楼层 
-		for(j=0;j<5;j++)
-		{
-			if(((abs(fm-floor)>abs(f[j]-floor))&&f[j]!=0))
-			{
-		        fm=f[j];
-			}
-		}//选择最近楼层 
-		if(floor>fm&&fm!=20)
-		{
-			status=-1;
+			floor[i][j]=0;
 		}
-		else if(floor<fm&&fm!=20)
-		{
-			status=1;
-		}//电梯运行 
-		else
-		{
-			status=0;
-			for(j=0;j<5;j++)
-			{
-				if(fm==a[j][1]&&s[j]==0&&T>=a[j][0])
-				{
-					fprintf(fp2,"%d时，停靠在%d楼\n",T,floor);
-					n++;
-					s[j]=1;
-				}
-				if(fm==a[j][2]&&s[j]==1)
-				{
-					fprintf(fp2,"%d时，停靠在%d楼\n",T,floor);
-					n--;
-					s[j]=2;
-					t[j]=T-a[j][0];
-				}
-			}//电梯在目标楼层，乘客上电梯或下电梯 
-		}
-	    if(status==0)
+	}
+}
+Elevatorscheduling::Elevatorscheduling()
+{
+	currentfloor=0;
+	indicator=0;
+	people=0;
+	t=0;
+}
+void Elevatorscheduling::gotofloor()
+{
+	int nextfloor,up=0,down=0,i;//up往更高楼层请求数，down同理 
+	for(i=0;i<3;i++)
+	{
+		if(inqueue.floor[i]!=0&&i>currentfloor)
 	    {
-			T++;
+			up++;
 		}
-		else if(status==1)
+		else if(inqueue.floor[i]!=0&&i<currentfloor)
 		{
-		    T++;
-			floor++;
+			down++;
 		}
-		else
+		if(outqueue.floor[i]!=0&&i>currentfloor)
+	   	{
+			up++;
+		}
+		else if(outqueue.floor[i]!=0&&i<currentfloor)
 		{
-			T++;
-			floor--;
+			down++;
 		}
-		if(s[0]==2&&s[1]==2&&s[2]==2&&s[3]==2&&s[4]==2)
+    }
+		if(up==0&&down==0)
 		{
-			break;
+			indicator=0;
 		}
-		fm=20;
+		else if(up!=0&&down==0)
+		{
+			indicator=1;
+		}
+		else if(up==0&&down!=0)
+		{
+			indicator=-1;
+		}
+}
+void Elevatorscheduling::going()
+{
+	if(indicator==1)
+	{
+	   	currentfloor++;
 	}
-	sum=t[0]+t[1]+t[2]+t[3]+t[4];
-	fprintf(fp2,"%d",sum);
-	return 0;
+	else if(indicator==-1)
+	{
+		currentfloor--;
+	}
+	t++;
+}
+int Elevatorscheduling::stop()
+{
+	int i,j,k=0,m;
+   	for(i=0;i<3;i++)
+	{
+	   	if(currentfloor==i&&outqueue.floor[i]!=0)//第i层是当前楼层，且有人要出去 
+	   	{
+	    	cout<<t<<' '<<currentfloor<<endl;
+	    	m=i;
+	    	people=people-outqueue.floor[i];
+			outqueue.floor[i]=0;
+			k=1;
+		}
+	}
+	for(i=0;i<3;i++)
+	{
+	   	if(currentfloor==i&&inqueue.floor[i]!=0)//第i层是当前楼层，且有人要进电梯 
+	   	{   
+	   	    if(i!=m)
+	   	    {
+	   	    	cout<<t<<' '<<currentfloor<<endl;	
+			}
+	    	people=people+inqueue.floor[i];
+	    	inqueue.floor[i]=0;
+	    	for(j=0;j<3;j++)
+	    	{
+	    		if(waitqueue.floor[i][j]!=0)//电梯响应了第i层的请求，并将第i层的目标楼层置入队列 
+	    		{
+	    			outqueue.floor[j]=outqueue.floor[j]+waitqueue.floor[i][j];
+	    			waitqueue.floor[i][j]=0;
+				}
+			}
+		k=1;
+		}
+	}
+	if(k==1)
+	{
+		t++;
+	}
+	return k;
+}
+int Elevatorscheduling::allcomplete()
+{
+	int j,k=0;
+	for(j=0;j<3;j++)//如果队列里还有请求未完成，k=1 
+	{
+		if(inqueue.floor[j]!=0||outqueue.floor[j]!=0)
+		{
+			k=1;
+		}
+	}
+	return k;
 }
