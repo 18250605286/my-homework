@@ -126,10 +126,9 @@ int Elevatorscheduling::stop()
 	    		{
 	    			outqueue.floor[j]=outqueue.floor[j]+waitqueue.floor[i][j];
 	    			waitqueue.floor[i][j]=0;
-				}
 			}
-		k=1;
 		}
+		k=1;
 	}
 	if(k==1)
 	{
