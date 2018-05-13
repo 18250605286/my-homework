@@ -5,7 +5,7 @@ using namespace std;
 queue::queue()
 {
 	int i;
-	for(i=0;i<3;i++)
+	for(i=1;i<11;i++)
 	{
 		floor[i]=0;
 	}
@@ -14,9 +14,9 @@ queue::queue()
 wait::wait()
 {
 	int i,j;
-	for(i=0;i<3;i++)
+	for(i=1;i<11;i++)
 	{
-		for(j=0;j<3;j++)
+		for(j=1;j<11;j++)
 		{
 			floor[i][j]=0;
 		}
@@ -24,15 +24,16 @@ wait::wait()
 }
 Elevatorscheduling::Elevatorscheduling()
 {
-	currentfloor=0;
+	currentfloor=1;
 	indicator=0;
 	people=0;
+	num=0; 
 	t=0;
 }
 void Elevatorscheduling::gotofloor()
 {
 	int nextfloor,up=0,down=0,i;//up往更高楼层请求数，down同理 
-	for(i=0;i<3;i++)
+	for(i=1;i<11;i++)
 	{
 		if(inqueue.floor[i]!=0&&i>currentfloor)
 	    {
@@ -51,18 +52,22 @@ void Elevatorscheduling::gotofloor()
 			down++;
 		}
     }
-		if(up==0&&down==0)
-		{
-			indicator=0;
-		}
-		else if(up!=0&&down==0)
-		{
-			indicator=1;
-		}
-		else if(up==0&&down!=0)
-		{
-			indicator=-1;
-		}
+	if(up==0&&down==0)
+	{
+		indicator=0;
+	}
+	else if(up!=0&&down==0)
+	{
+		indicator=1;
+	}
+	else if(up==0&&down!=0)
+	{
+		indicator=-1;
+	}
+	else if(indicator==0&&up!=0&&down!=0)
+	{
+		indicator=1;
+	}	
 }
 void Elevatorscheduling::going()
 {
@@ -79,28 +84,39 @@ void Elevatorscheduling::going()
 int Elevatorscheduling::stop()
 {
 	int i,j,k=0,m;
-   	for(i=0;i<3;i++)
+	if(n==1) 
+	{
+		freopen( "output1.txt", "a", stdout);
+	}
+	else if(n==2)
+	{
+		freopen( "output2.txt", "a", stdout);
+	}
+	else if(n==3)
+	{
+		freopen( "output3.txt", "a", stdout);
+	}
+   	for(i=1;i<11;i++)
 	{
 	   	if(currentfloor==i&&outqueue.floor[i]!=0)//第i层是当前楼层，且有人要出去 
 	   	{
 	    	cout<<t<<' '<<currentfloor<<endl;
 	    	m=i;
 	    	people=people-outqueue.floor[i];
+	    	num=num-outqueue.floor[i];
 			outqueue.floor[i]=0;
 			k=1;
 		}
 	}
-	for(i=0;i<3;i++)
+	for(i=1;i<11;i++)
 	{
+		
 	   	if(currentfloor==i&&inqueue.floor[i]!=0)//第i层是当前楼层，且有人要进电梯 
 	   	{   
-	   	    if(i!=m)
-	   	    {
-	   	    	cout<<t<<' '<<currentfloor<<endl;	
-			}
+	   	   	cout<<t<<' '<<currentfloor<<endl;	
 	    	people=people+inqueue.floor[i];
 	    	inqueue.floor[i]=0;
-	    	for(j=0;j<3;j++)
+	    	for(j=1;j<11;j++)
 	    	{
 	    		if(waitqueue.floor[i][j]!=0)//电梯响应了第i层的请求，并将第i层的目标楼层置入队列 
 	    		{
@@ -115,17 +131,15 @@ int Elevatorscheduling::stop()
 	{
 		t++;
 	}
+	fclose(stdout);
 	return k;
 }
 int Elevatorscheduling::allcomplete()
 {
-	int j,k=0;
-	for(j=0;j<3;j++)//如果队列里还有请求未完成，k=1 
+	int j,k=0;//如果队列里还有请求未完成，k=1 
+	if(num!=0||people!=0)
 	{
-		if(inqueue.floor[j]!=0||outqueue.floor[j]!=0)
-		{
-			k=1;
-		}
+		k=1;
 	}
 	return k;
 }
