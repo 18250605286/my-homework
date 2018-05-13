@@ -1,10 +1,16 @@
 #include<iostream>
 #include<fstream>
-#include "elevator.h"
+#include"elevator.h"
 using namespace std;
 int main()
 {
 	freopen( "input.txt", "r", stdin);
+	freopen( "output1.txt", "w", stdout);
+	fclose(stdout);
+	freopen( "output2.txt", "w", stdout);
+	fclose(stdout);
+	freopen( "output3.txt", "w", stdout);
+	fclose(stdout);
 	int n,i,j,time,nowfloor,destinationfloor;//timeÎªÇëÇóÊ±¿Ì 
 	int k0=0,k1=0,k2=0,m=0;
 	Elevatorscheduling ele1,ele2,ele3;

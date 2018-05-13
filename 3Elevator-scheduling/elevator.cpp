@@ -104,7 +104,7 @@ int Elevatorscheduling::stop()
 	    	m=i;
 	    	people=people-outqueue.floor[i];
 	    	num=num-outqueue.floor[i];
-		outqueue.floor[i]=0;
+		    outqueue.floor[i]=0;
 			k=1;
 		}
 	}
@@ -117,9 +117,9 @@ int Elevatorscheduling::stop()
 	   	    {
 	   	    	cout<<t<<' '<<currentfloor<<endl;	
 		    }	
-                }
 	    	people=people+inqueue.floor[i];
 	    	inqueue.floor[i]=0;
+	    
 	    	for(j=1;j<11;j++)
 	    	{
 	    		if(waitqueue.floor[i][j]!=0)//电梯响应了第i层的请求，并将第i层的目标楼层置入队列 
@@ -129,6 +129,7 @@ int Elevatorscheduling::stop()
 			}
 		}
 		k=1;
+	}
 	}
 	if(k==1)
 	{
