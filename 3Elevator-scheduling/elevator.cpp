@@ -104,16 +104,20 @@ int Elevatorscheduling::stop()
 	    	m=i;
 	    	people=people-outqueue.floor[i];
 	    	num=num-outqueue.floor[i];
-			outqueue.floor[i]=0;
+		outqueue.floor[i]=0;
 			k=1;
 		}
 	}
 	for(i=1;i<11;i++)
 	{
-		
-	   	if(currentfloor==i&&inqueue.floor[i]!=0)//第i层是当前楼层，且有人要进电梯 
+		if(currentfloor==i&&inqueue.floor[i]!=0)//第i层是当前楼层，且有人要进电梯 
 	   	{   
-	   	   	cout<<t<<' '<<currentfloor<<endl;	
+
+	   	    if(i!=m)
+	   	    {
+	   	    	cout<<t<<' '<<currentfloor<<endl;	
+		    }	
+                }
 	    	people=people+inqueue.floor[i];
 	    	inqueue.floor[i]=0;
 	    	for(j=1;j<11;j++)
