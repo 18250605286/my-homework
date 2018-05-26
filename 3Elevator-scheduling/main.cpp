@@ -2,15 +2,34 @@
 #include<fstream>
 #include"elevator.h"
 using namespace std;
-int main()
+int main(int argc,char *argv[])
 {
-	freopen( "input.txt", "r", stdin);
-	freopen( "output1.txt", "w", stdout);
-	fclose(stdout);
-	freopen( "output2.txt", "w", stdout);
-	fclose(stdout);
-	freopen( "output3.txt", "w", stdout);
-	fclose(stdout);
+	int k=0;
+	if(argc==2)
+	{
+		k=1;
+		freopen(argv[1],"r",stdin);
+		freopen("output1.txt","w",stdout);
+		fclose(stdout);
+		freopen("output2.txt","w",stdout);
+		fclose(stdout);
+		freopen("output3.txt","w",stdout);
+		fclose(stdout);
+	}
+	else if(argc==5)
+	{
+		freopen(argv[1],"r",stdin);
+		freopen(argv[2],"w", stdout);
+		fclose(stdout);
+		freopen(argv[3],"w", stdout);
+		fclose(stdout);
+		freopen(argv[4],"w", stdout);
+		fclose(stdout);
+	}
+	else 
+	{
+		cout<<"错误的输入"<<endl; 
+	}
 	int n,i,j,time,nowfloor,destinationfloor;//time为请求时刻 
 	int k0=0,k1=0,k2=0,m=0;
 	Elevatorscheduling ele1,ele2,ele3;
@@ -83,18 +102,37 @@ int main()
 		ele1.gotofloor();//判断运行方向 
 		ele2.gotofloor();
 		ele3.gotofloor();
-		if(ele1.stop()!=1)//如果电梯有停靠，那么电梯先不运行，执行下一循环，判断在新的时刻是否有请求 
+		if(k==1)
 		{
-			ele1.going();
-		}	
-		if(ele2.stop()!=1)
-		{
-			ele2.going();
+			if(ele1.stop()!=1)//如果电梯有停靠，那么电梯先不运行，执行下一循环，判断在新的时刻是否有请求 
+			{
+				ele1.going();
+			}	
+			if(ele2.stop()!=1)
+			{
+				ele2.going();
+			}
+			if(ele3.stop()!=1)
+			{
+				ele3.going();
+			}	
 		}
-		if(ele3.stop()!=1)
+		else
 		{
-			ele3.going();
+			if(ele1.stop(argv)!=1)//如果电梯有停靠，那么电梯先不运行，执行下一循环，判断在新的时刻是否有请求 
+			{
+				ele1.going();
+			}	
+			if(ele2.stop(argv)!=1)
+			{
+				ele2.going();
+			}
+			if(ele3.stop(argv)!=1)
+			{
+				ele3.going();
+			}	
 		}
+		
 		k0=ele1.allcomplete();
 		k1=ele2.allcomplete();
 		k2=ele3.allcomplete();

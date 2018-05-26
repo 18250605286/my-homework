@@ -28,5 +28,6 @@ class Elevatorscheduling
 	    void gotofloor(); //判断运行方向 
 		void going();//电梯运行 
         int stop(); //停靠在当前楼层
+        int stop(char *argv[]);
 	    int allcomplete();//判断请求是否全部完成 
 };

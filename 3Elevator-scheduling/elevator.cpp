@@ -1,7 +1,6 @@
 #include<iostream>
 #include<fstream>
 #include "elevator.h"
-using namespace std;
 queue::queue()
 {
 	int i;
@@ -86,15 +85,72 @@ int Elevatorscheduling::stop()
 	int i,j,k=0,m;
 	if(n==1) 
 	{
-		freopen( "output1.txt", "a", stdout);
+		freopen("output1.txt", "a", stdout);
 	}
 	else if(n==2)
 	{
-		freopen( "output2.txt", "a", stdout);
+		freopen("output2.txt", "a", stdout);
 	}
 	else if(n==3)
 	{
-		freopen( "output3.txt", "a", stdout);
+		freopen("output3.txt", "a", stdout);
+	}
+   	for(i=1;i<11;i++)
+	{
+	   	if(currentfloor==i&&outqueue.floor[i]!=0)//第i层是当前楼层，且有人要出去 
+	   	{
+	    	cout<<t<<' '<<currentfloor<<endl;
+	    	m=i;
+	    	people=people-outqueue.floor[i];
+	    	num=num-outqueue.floor[i];
+		    outqueue.floor[i]=0;
+			k=1;
+		}
+	}
+	for(i=1;i<11;i++)
+	{
+		if(currentfloor==i&&inqueue.floor[i]!=0)//第i层是当前楼层，且有人要进电梯 
+	   	{   
+
+	   	    if(i!=m)
+	   	    {
+	   	    	cout<<t<<' '<<currentfloor<<endl;	
+		    }	
+	    	people=people+inqueue.floor[i];
+	    	inqueue.floor[i]=0;
+	    
+	    	for(j=1;j<11;j++)
+	    	{
+	    		if(waitqueue.floor[i][j]!=0)//电梯响应了第i层的请求，并将第i层的目标楼层置入队列 
+	    		{
+	    			outqueue.floor[j]=outqueue.floor[j]+waitqueue.floor[i][j];
+	    			waitqueue.floor[i][j]=0;
+			}
+		}
+		k=1;
+	}
+	}
+	if(k==1)
+	{
+		t++;
+	}
+	fclose(stdout);
+	return k;
+}
+int Elevatorscheduling::stop(char *argv[])
+{
+	int i,j,k=0,m;
+	if(n==1) 
+	{
+		freopen(argv[2], "a", stdout);
+	}
+	else if(n==2)
+	{
+		freopen(argv[3], "a", stdout);
+	}
+	else if(n==3)
+	{
+		freopen(argv[4], "a", stdout);
 	}
    	for(i=1;i<11;i++)
 	{
